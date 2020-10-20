@@ -10,7 +10,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Introduction
 
 # Part 1
-
+git remote add origin https://github.com/jeanetteclark/training_jclark.git
+git branch -M main
+git push -u origin main
 1. list item 1
 2. list item 2
 3. list item 3
