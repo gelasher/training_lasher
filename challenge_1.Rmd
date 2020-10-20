@@ -1,0 +1,49 @@
+---
+title: "A Test RMarkdown"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+# Part 1
+
+1. list item 1
+2. list item 2
+3. list item 3
+  + Item 3a
+  
+*This is an italic item*
+
+# Part 2
+
+**a bolded text line** 
+
+```{r code chunck1}
+
+x <- 3 * 4
+
+```
+
+```{r ggplot example}
+
+library(readr)
+library(ggplot2) # Hi Everett - I just added this hear because I didn't see this earlier
+#I realized I said ggplot instead of ggplot2 in our chat
+
+#this line should work now
+ggplot(diamonds, aes(x=carat, y=price, color=cut)) + geom_point() + geom_smooth() +
+  theme_classic()
+
+```
+
+
+```{r}
+# you will need readr to knit
+library(readr)
+bg_chem <- read_csv("BGchem2008data.csv")
+
+```
