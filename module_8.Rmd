@@ -4,25 +4,169 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = T)
 ```
 
-## R Markdown
+```{r, message=F, warning=F}
+library(dplyr)
+library(tidyr)
+library(readr)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+```{r}
+catch_original <- read_csv("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1")
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+catch_data <- catch_original %>% 
+  select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum)
+catch_data
+
+```
+
+```{r}
+
+summary(catch_data)
+head(catch_data)
+
+```
+
+```{r}
+catch_clean <- catch_data %>% 
+  mutate(Chinook = as.numeric(Chinook))
+
+```
+
+```{r}
+i <- which(is.na(catch_clean$Chinook))
+i
+
+```
+
+```{r}
+catch_original[i,]
+
+```
+
+
+```{r}
+
+catch_clean <- catch_data %>% 
+  mutate(Chinook = ifelse(Chinook == "I", 1, Chinook)) %>%
+  mutate(Chinook = as.integer(Chinook))
+
+head(catch_clean)
+catch_clean
+
+
+```
+
+
+```{r}
+catch_long <- catch_clean %>% 
+  pivot_longer(cols = -c(Region, Year), names_to = "species", values_to = "catch")
+
+head(catch_long)
+
+
+```
+
+```{r}
+catch_wide <- catch_long %>% 
+  pivot_wider(names_from = species, values_from = catch)
+
+head(catch_wide)
+
+
+```
+```{r}
+
+catch_long <- catch_long %>% 
+  rename(catch_thousands = catch)
+
+head(catch_long)
+
+```
+```{r}
+
+catch_long <- catch_long %>% 
+  mutate(catch = catch_thousands * 1000) %>% 
+  select(-catch_thousands)
+
+head(catch_long)
+
+
+```
+```{r}
+
+mean_region <- catch_long %>% 
+  group_by(Region) %>%
+  summarise(catch_mean = mean(catch))
+
+```
+
+```{r}
+n_region <- catch_long %>% 
+  group_by(Region) %>%
+  summarize(n = n())
+
+```
+
+```{r}
+SSE_catch <- catch_long %>% 
+  filter(Region == "SSE")
+
+head(SSE_catch)
+
+```
+
+```{r}
+
+mean_region <- catch_long %>% 
+  group_by(Region) %>% 
+  summarise(mean_catch = mean(catch)) %>% 
+  arrange(desc(mean_catch))
+mean_region
+
+```
+
+
+```{r}
+region_defs <- read_csv("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.303.1") %>% 
+    select(code, mgmtArea)
+
+```
+```{r}
+catch_joined <- left_join(catch_long, region_defs, by = c("Region" = "code"))
+
+head(catch_joined)
+
+```
+```{r}
+region_defs <- region_defs %>% 
+  rename(Region = code, Region_Name = mgmtArea)
+
+catch_joined <- left_join(catch_long, region_defs, by = c("Region"))
+
+head(catch_joined)
+
+```
+
+
+```{r}
+sites_df <- data.frame(site = c("HAW-101",
+                                "HAW-103",
+                                "OAH-320",
+                                "OAH-219",
+                                "MAI-039"),
+                       stringsAsFactors = FALSE)
+
+sites_df %>% 
+  separate(site, c("island", "site_number"), "-")
+
+
+```
+
