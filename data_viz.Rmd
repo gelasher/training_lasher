@@ -49,5 +49,54 @@ head(annual_esc)
 
 ```{r}
 
+library(ggplot2)
+ggplot(annual_esc, mapping = aes(Species, escapement)) +
+  geom_col(fill = '2') +
+  theme_classic()
+
 ```
+```{r}
+annual_esc %>% 
+  filter(SASAP.Region == "Kodiak") %>% 
+ggplot(aes(x = Year, y = escapement, color = Species)) + 
+    geom_line() +
+    geom_point()
+```
+
+```{r}
+kodiak_esc <- annual_esc %>% 
+  filter(SASAP.Region == "Kodiak")
+```
+
+```{r}
+ggplot(kodiak_esc, aes(x = Year, y = escapement, color = Species)) + 
+    geom_line() +
+    geom_point() +
+    ylab("Escapement") +
+    ggtitle("Kodiak Salmon Escapement") +
+    theme_classic()
+```
+
+```{r}
+
+ggplot(annual_esc, aes(x = Year, y = escapement, color = Species)) + 
+    geom_line() +
+    geom_point() +
+    scale_y_continuous(labels = comma) +
+    facet_wrap(~SASAP.Region, scales = "free_y", ncol = 2) +
+    ylab("Escapement") + 
+  theme_classic()
+
+```
+
+```{r}
+locations <- esc %>% 
+  distinct(Location, Latitude, Longitude) %>% 
+  drop_na()
+
+leaflet(locations) %>% 
+  addTiles() %>% 
+  addMarkers(lng = ~Longitude, lat = ~Latitude, popup = ~ Location)
+```
+
 
