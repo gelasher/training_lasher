@@ -120,3 +120,4 @@ scatterplot(temps_df, point_size=2, font_size = 10) +
   scale_color_gradient(low = "blue", high = "red")
 ```
 
+
