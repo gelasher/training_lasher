@@ -1,0 +1,70 @@
+---
+title: "Reproducible papers with RMarkdown"
+author: ["G. Everett Lasher, everett.lasher@pitt.edu"]
+output: html_document
+bibliography: references.end
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, message = F, warning = F)
+
+library(ggplot2)
+library(knitr)
+library(broom)
+library(captioner)
+```
+
+
+```{r dataloading, results= 'hide'}
+
+data(diamonds)
+head(diamonds)
+
+```
+
+
+
+# Abstract
+
+This is the abstract. 
+
+equations: $y = mx +b$
+
+\[\sum = {i = 1}\]
+
+# Introduction
+
+
+# Methods
+
+
+# Results
+
+```{r}
+ggplot(diamonds, aes(carat, price, color = clarity)) +
+  geom_point() +
+  labs(x = 'carat', y = 'price') +
+  theme_classic()
+```
+
+The linear model associated with this plot is:
+```{r}
+mod <- lm(price ~ carat, diamonds)
+#render in html
+kable(tidy(mod), digits = 2)
+```
+We found that the slope was `r round(mod$Coefficients["carat"][[1]])`.
+```{r}
+
+```
+
+# Discussion
+
+
+# Conclusions
+
+
+# Ack
+
+
+# References
